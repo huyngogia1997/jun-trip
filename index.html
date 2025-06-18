@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hành Trình Miền Trung - Du Lịch Gia Đình</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lấy chặng đang được hiển thị từ localStorage (nếu có)
+            const currentLeg = localStorage.getItem('currentLeg') || '1';
+            
+            // Hiển thị chặng đã lưu
+            showLeg(currentLeg);
+            
+            // Đánh dấu nút điều hướng hiện tại
+            updateNavigation(currentLeg);
+        });
+        
+        // Hàm hiển thị chặng được chọn
+        function showLeg(legNumber) {
+            // Ẩn tất cả các chặng
+            const allLegs = document.querySelectorAll('.route-card');
+            allLegs.forEach(leg => {
+                leg.style.display = 'none';
+            });
+            
+            // Hiển thị chặng được chọn với hiệu ứng fade in
+            const selectedLeg = document.getElementById('leg-' + legNumber);
+            if (selectedLeg) {
+                selectedLeg.style.opacity = '0';
+                selectedLeg.style.display = 'block';
+                
+                // Hiệu ứng fade in
+                setTimeout(() => {
+                    selectedLeg.style.transition = 'opacity 0.3s ease';
+                    selectedLeg.style.opacity = '1';
+                }, 50);
+                
+                // Lưu chặng hiện tại vào localStorage
+                localStorage.setItem('currentLeg', legNumber);
+                
+                // Cuộn lên đầu phần nội dung
+                window.scrollTo({
+                    top: document.querySelector('.route-details').offsetTop - 20,
+                    behavior: 'smooth'
+                });
+                
+                // Cập nhật tiêu đề phần
+                document.getElementById('route-section-title').textContent = 'Chi Tiết Lộ Trình - Chặng ' + legNumber;
+                
+                // Cập nhật trạng thái nút điều hướng
+                updateNavigation(legNumber);
+            }
+        }
+        
+        // Cập nhật trạng thái nút điều hướng
+        function updateNavigation(currentLeg) {
+            // Đánh dấu nút điều hướng hiện tại
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-leg') === currentLeg) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Cập nhật nút Trước/Sau
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const bottomPrevBtn = document.getElementById('bottom-prev-btn');
+            const bottomNextBtn = document.getElementById('bottom-next-btn');
+            
+            prevBtn.disabled = (currentLeg === '1');
+            nextBtn.disabled = (currentLeg === '6');
+            bottomPrevBtn.disabled = (currentLeg === '1');
+            bottomNextBtn.disabled = (currentLeg === '6');
+        }
+        
+        // Hàm chuyển đến chặng trước
+        function prevLeg() {
+            const currentLeg = parseInt(localStorage.getItem('currentLeg') || '1');
+            if (currentLeg > 1) {
+                showLeg((currentLeg - 1).toString());
+            }
+        }
+        
+        // Hàm chuyển đến chặng sau
+        function nextLeg() {
+            const currentLeg = parseInt(localStorage.getItem('currentLeg') || '1');
+            if (currentLeg < 6) {
+                showLeg((currentLeg + 1).toString());
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --primary-color: #2a9d8f;
+            --secondary-color: #e9c46a;
+            --accent-color: #e76f51;
+            --text-color: #264653;
+            --light-bg: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+            background-size: cover;
+            background-position: center;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .overview {
+            background-color: white;
+            padding: 3rem 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .overview-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .overview-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+        
+        .route-details {
+            padding: 3rem 0;
+        }
+        
+        .route-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .route-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .route-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .route-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .route-stats {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .route-body {
+            padding: 1.5rem;
+        }
+        
+        .route-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .info-item h4 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .accommodation {
+            background-color: #f0f8ff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .accommodation h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .accommodation p {
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #d65f41;
+        }
+        
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .itinerary-section {
+            margin-top: 2rem;
+        }
+        
+        .itinerary-day {
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .itinerary-day-header {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            padding: 0.8rem 1rem;
+            font-weight: bold;
+        }
+        
+        .itinerary-day-content {
+            padding: 1rem;
+        }
+        
+        .itinerary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        
+        .itinerary-table th {
+            background-color: #f0f0f0;
+            text-align: left;
+            padding: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .itinerary-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        
+        .itinerary-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .food-recommendations {
+            background-color: #f8f5e6;
+            padding: 0.8rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+        
+        .food-recommendations h5 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .navigation-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+        
+        .leg-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .nav-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.8rem 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 500;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-btn.active {
+            background-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .nav-btn:hover:not(:disabled) {
+            background-color: #238b7e;
+            transform: translateY(-1px);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .direction-btn {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 4px;
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            flex: 1;
+            max-width: 200px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .direction-btn:hover:not(:disabled) {
+            background-color: #d4b35b;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+        
+        .direction-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                height: 250px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .route-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .route-stats {
+                margin-top: 1rem;
+            }
+            
+            .itinerary-table th:first-child,
+            .itinerary-table td:first-child {
+                width: 80px;
+            }
+            
+            .leg-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .leg-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Hành Trình Khám Phá Miền Trung</h1>
+            <p>HCM → Đà Nẵng → Huế → Hội An → Quy Nhơn → Nha Trang → HCM</p>
+        </div>
+    </header>
+
+    <section class="overview">
+        <div class="container">
+            <h2>Tổng Quan Hành Trình</h2>
+            <div class="overview-content">
+                <div class="overview-text">
+                    <p><strong>Thời gian:</strong> 7-8 ngày</p>
+                    <p><strong>Phương tiện:</strong> Ô tô tự lái</p>
+                    <p><strong>Tổng quãng đường:</strong> Khoảng 2,178 km</p>
+                    <p><strong>Điểm nhấn:</strong> Lễ hội pháo hoa quốc tế Đà Nẵng (DIFF)</p>
+                    <p><strong>Yêu cầu:</strong> Chia đều quãng đường để giảm mệt mỏi khi lái xe</p>
+                    <br>
+                    <p>Hành trình khám phá miền Trung Việt Nam, bắt đầu từ TP.HCM và kết thúc tại TP.HCM, đi qua các thành phố du lịch nổi tiếng như Đà Nẵng, Huế, Hội An, Quy Nhơn và Nha Trang. Mỗi điểm đến đều có nét đẹp riêng và những trải nghiệm độc đáo đang chờ đón bạn!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="route-details">
+        <div class="container">
+            <h2 id="route-section-title">Chi Tiết Lộ Trình</h2>
+            
+            <div class="navigation-container">
+                <div class="leg-buttons">
+                    <button class="nav-btn" data-leg="1" onclick="showLeg('1')">Chặng 1: HCM → Đà Nẵng</button>
+                    <button class="nav-btn" data-leg="2" onclick="showLeg('2')">Chặng 2: Đà Nẵng → Huế</button>
+                    <button class="nav-btn" data-leg="3" onclick="showLeg('3')">Chặng 3: Huế → Hội An</button>
+                    <button class="nav-btn" data-leg="4" onclick="showLeg('4')">Chặng 4: Hội An → Quy Nhơn</button>
+                    <button class="nav-btn" data-leg="5" onclick="showLeg('5')">Chặng 5: Quy Nhơn → Nha Trang</button>
+                    <button class="nav-btn" data-leg="6" onclick="showLeg('6')">Chặng 6: Nha Trang → HCM</button>
+                </div>
+                <div class="nav-buttons">
+                    <button id="prev-btn" class="direction-btn" onclick="prevLeg()">← Chặng trước</button>
+                    <button id="next-btn" class="direction-btn" onclick="nextLeg()">Chặng sau →</button>
+                </div>
+            </div>
+            <!-- HCM - Da Nang -->
+            <div id="leg-1" class="route-card">
+                <div class="route-header">
+                    <h3>Chặng 1: TP.HCM → Đà Nẵng</h3>
+                    <div class="route-stats">
+                        <div class="stat">~14 giờ</div>
+                        <div class="stat">912 km</div>
+                    </div>
+                </div>
+                <div class="route-body">
+                    <div class="route-info">
+                        <div class="info-item">
+                            <h4>Các mốc định hướng lộ trình (Dấu lưu Vietmap)</h4>
+                            <ul>
+                                <li><strong>HCM - Da Nang - 1:</strong> Que Toi Village Resort Phu Yen, Long Hai Dong Commune, Sông Cầu, Phú Yên</li>
+                                <li><strong>HCM - Da Nang - 2:</strong> ĐIỆN GIÓ Quy Nhơn, Nhơn Hội, Bình Định</li>
+                                <li><strong>HCM - Da Nang - 3:</strong> ĐT639, Mỹ THắng, Phù Mỹ, Bình Định</li>
+                                <li><strong>HCM - Da Nang - 4:</strong> Gold Plaza Hotel Da Nang</li>
+                            </ul>
+                        </div>
+                        <div class="info-item">
+                            <h4>Chi tiết đường đi</h4>
+                            <p>Cao tốc: 563 km</p>
+                            <p>Đường thường: 349 km</p>
+                            <a href="https://www.google.com/maps/dir/FLORA+ANH+%C4%90%C3%80O,+%C4%90%C6%B0%E1%BB%9Dng+%C4%90%E1%BB%97+Xu%C3%A2n+H%E1%BB%A3p,+Ph%C6%B0%E1%BB%9Bc+Long+B,+Th%E1%BB%A7+%C4%90%E1%BB%A9c,+H%E1%BB%93+Ch%C3%AD+Minh/13.4517298,109.2188821/QL19B,+Nh%C6%A1n+H%E1%BB%99i,+Quy+Nh%C6%A1n,+B%C3%ACnh+%C4%90%E1%BB%8Bnh,+Vi%E1%BB%87t+Nam/%C4%90T639,+M%E1%BB%B9+TH%E1%BA%AFng,+Ph%C3%B9+M%E1%BB%B9,+B%C3%ACnh+%C4%90%E1%BB%8Bnh/11+Tr%E1%BA%A7n+Th%E1%BB%8B+L%C3%BD,+Ho%C3%A0+C%C6%B0%E1%BB%9Dng+B%E1%BA%AFc,+H%E1%BA%A3i+Ch%C3%A2u,+%C4%90%C3%A0+N%E1%BA%B5ng+550000,+Vi%E1%BB%87t+Nam" target="_blank" class="btn">Xem lộ trình trên Google Maps</a>
+                        </div>
+                    </div>
+                    
+                    <div class="accommodation">
+                        <h4>Khách sạn: Gold Plaza Hotel Da Nang</h4>
+                        <p><strong>Địa chỉ:</strong> <a href="https://maps.app.goo.gl/AuwbxVkDaduZLpcPA" target="_blank">11 Trần Thị Lý, Hoà Cường Bắc, Hải Châu, Đà Nẵng 550000</a></p>
+                        <p><strong>SĐT:</strong> <a href="tel:0962224489">0962224489</a> / <a href="tel:02363874555">0236 3874 555</a></p>
+                        <p><strong>Mã đặt phòng:</strong> 1620882009</p>
+                        <p><strong>Thời gian nhận phòng:</strong> 14:00 - 12:00</p>
+                        <a href="https://maps.app.goo.gl/AuwbxVkDaduZLpcPA" target="_blank" class="btn">Xem vị trí trên bản đồ</a>
+                    </div>
+                    
+                    <div class="itinerary-section">
+                        <h4>Lịch trình chi tiết</h4>
+                        
+                        <div class="itinerary-day">
+                            <div class="itinerary-day-header">Ngày 1-2 (20/06 - 21/06): Di chuyển và Lễ hội Pháo hoa</div>
+                            <div class="itinerary-day-content">
+                                <table class="itinerary-table">
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Hoạt động</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                    <tr>
+                                        <td>19:00 - 14:00 (hôm sau)</td>
+                                        <td>Di chuyển HCM - Đà Nẵng</td>
+                                        <td>Nhận phòng từ 14:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>17:15</td>
+                                        <td>Ăn nhẹ + Mua đồ ăn</td>
+                                        <td>Chuẩn bị cho lễ hội pháo hoa</td>
+                                    </tr>
+                                    <tr>
+                                        <td>17:45</td>
+                                        <td>Lên thuyền xem pháo hoa<br>Địa Chỉ: <a href="https://maps.app.goo.gl/doF9K6Foh71K6eeW9" target="_blank">Cảng Sông Thu</a><br>SĐT: 0932500357</td>
+                                        <td>Lễ hội pháo hoa quốc tế DIFF<br>Còn phải thanh toán thêm 3tr6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>24:00</td>
+                                        <td>Cầu Sông Hàn<br><a href="https://maps.app.goo.gl/iVR1SbTyyhEfDATq8" target="_blank">Xem bản đồ</a></td>
+                                        <td>Xoay tròn</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="itinerary-day">
+                            <div class="itinerary-day-header">Ngày 3 (22/06): Khám phá Đà Nẵng</div>
+                            <div class="itinerary-day-content">
+                                <table class="itinerary-table">
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Hoạt động</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                    <tr>
+                                        <td>08:00</td>
+                                        <td>Chợ Cồn<br><a href="https://maps.app.goo.gl/CtREGfRUhbpA8ssu7" target="_blank">Xem bản đồ</a></td>
+                                        <td>Trải nghiệm chợ địa phương</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10:00</td>
+                                        <td>Bán đảo Sơn Trà<br>- <a href="https://maps.app.goo.gl/2s5tMTkN2UfiLHuo8" target="_blank">Bãi Bụt</a><br>- <a href="https://maps.app.goo.gl/TWGuEGEPUCtU9v1u7" target="_blank">Chùa Linh Ứng</a></td>
+                                        <td>Ngắm cảnh, thăm Chùa Linh Ứng</td>
+                                    </tr>
+                                    <tr>
+                                        <td>12:00</td>
+                                        <td>Ăn trưa - Hải sản Nam Đảnh<br><a href="https://maps.app.goo.gl/Di6VSVaXwkusf34J6" target="_blank">Xem bản đồ</a></td>
+                                        <td>Cá đuối nướng, hào, chíp chíp, mực xào Thái</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13:00 - 16:00</td>
+                                        <td>Nghỉ ngơi</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>16:00 - 18:00</td>
+                                        <td>Chợ Bắc Mỹ An</td>
+                                        <td><a href="https://maps.app.goo.gl/KTysJCHjbfbqYvCz8" target="_blank">Xem bản đồ</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>18:00 - 20:00</td>
+                                        <td>Tour ẩm thực tối</td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                                
+                                <div class="food-recommendations">
+                                    <h5>Địa điểm ăn uống buổi tối:</h5>
+                                    <ul>
+                                        <li>Bánh bơ: 56 Bà Huyện Thanh Quan, Quận Ngũ Hành Sơn <a href="https://maps.app.goo.gl/jEiuzKYeejwbU6NQ7" target="_blank">Xem bản đồ</a></li>
+                                        <li>Thịt muối xã Quỳnh Đại Lộc: 162-178 Đ. Nguyễn Hoàng, Phước Ninh, Hải Châu <a href="https://maps.app.goo.gl/dcFY8QzCSavTEXfj9" target="_blank">Xem bản đồ</a></li>
+                                        <li>Đảo Matcha: 28 Hoàng Văn Thụ, Phường Phước Ninh, Quận Hải Châu <a href="https://maps.app.goo.gl/w1ZnKouALh4kd2TC8" target="_blank">Xem bản đồ</a></li>
+                                        <li>Mỳ Quảng Quê Xưa Ăn thịt 2 da: 165 Núi Thành, Hoà Cường Bắc, Hải Châu, Đà Nẵng 550000 <a href="https://maps.app.goo.gl/KGnbDgxT259HQMuT9" target="_blank">Xem bản đồ</a></li>
+                                        <li>Nghe nhạc: Đà Nẵng Moment</li>
+                                        <li>Xem Cầu Rồng phun lửa: 21:00 (Chủ nhật) <a href="https://maps.app.goo.gl/2S2e2jonpU9oEinEA" target="_blank">Xem bản đồ</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Da Nang - Hue -->
+            <div id="leg-2" class="route-card">
+                <div class="route-header">
+                    <h3>Chặng 2: Đà Nẵng → Huế</h3>
+                    <div class="route-stats">
+                        <div class="stat">~2 giờ</div>
+                        <div class="stat">100 km</div>
+                    </div>
+                </div>
+                <div class="route-body">
+                    <div class="route-info">
+                        <div class="info-item">
+                            <h4>Các mốc định hướng lộ trình (Dấu lưu Vietmap)</h4>
+                            <ul>
+                                <li><strong>Da Nang - Hue - 1:</strong> LacoLand Coffee, 495A Đ. Lạc Long Quân, TT. Lăng Cô, Phú Lộc, Thành phố Huế</li>
+                                <li><strong>Da Nang - Hue - 2:</strong> Hong Thien Hotel1</li>
+                            </ul>
+                        </div>
+                        <div class="info-item">
+                            <h4>Chi tiết đường đi</h4>
+                            <p>Cao tốc: 0 km</p>
+                            <p>Đường thường: 100 km</p>
+                            <a href="https://www.google.com/maps/dir/%C4%90%C3%A0+N%E1%BA%B5ng/LacoLand+Coffee,+495A+%C4%90.+L%E1%BA%A1c+Long+Qu%C3%A2n,+TT.+L%C4%83ng+C%C3%B4,+Ph%C3%BA+L%E1%BB%99c,+Th%C3%A0nh+ph%E1%BB%91+Hu%E1%BA%BF,+Vi%E1%BB%87t+Nam/35+6+Chu+V%C4%83n+An,+Ph%C3%BA+H%E1%BB%99i,+Hu%E1%BA%BF,+Th%C3%A0nh+ph%E1%BB%91+Hu%E1%BA%BF/@16.2616868,107.6888367,61496m/data=!3m1!1e3!4m20!4m19!1m5!1m1!1s0x314219c792252a13:0x1df0cb4b86727e06!2m2!1d108.0717219!2d16.0544563!1m5!1m1!1s0x31422a2bee79e75b:0xc5c1b38c4dbe6fd7!2m2!1d108.0642!2d16.2688!1m5!1m1!1s0x3141a13d365b1eef:0x7a7769be6a9f9157!2m2!1d107.5962327!2d16.4691234!3e0" target="_blank" class="btn">Xem lộ trình trên Google Maps</a>
+                        </div>
+                    </div>
+                    
+                    <div class="accommodation">
+                        <h4>Khách sạn: Hong Thien Hotel1</h4>
+                        <p><strong>Địa chỉ:</strong> <a href="https://maps.app.goo.gl/ZPjwXnBd84K7KYkg6" target="_blank">35/6 Chu Văn An, Phú Hội, Huế, Thành phố Huế</a></p>
+                        <p><strong>SĐT:</strong> <a href="tel:02343837399">02343837399</a> / <a href="tel:02343947575">0234 3947 575</a></p>
+                        <p><strong>Mã đặt phòng:</strong> 1621074457</p>
+                        <p><strong>Thời gian nhận phòng:</strong> 12:30 - 12:00</p>
+                        <a href="https://maps.app.goo.gl/ZPjwXnBd84K7KYkg6" target="_blank" class="btn">Xem vị trí trên bản đồ</a>
+                    </div>
+                    
+                    <div class="itinerary-section">
+                        <h4>Lịch trình chi tiết</h4>
+                        
+                        <div class="itinerary-day">
+                            <div class="itinerary-day-header">Ngày 23/06: Khám phá Huế</div>
+                            <div class="itinerary-day-content">
+                                <table class="itinerary-table">
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Hoạt động</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                    <tr>
+                                        <td>06:00 - 08:00</td>
+                                        <td>Di chuyển đến Huế</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>09:00</td>
+                                        <td>Quán Hạnh<br>11-15 Đường Phó Đức Chính, Phú Hội<br><a href="https://maps.app.goo.gl/MQpMyKvRjBvjiVHCA" target="_blank">Xem bản đồ</a></td>
+                                        <td>Điểm tâm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10:00</td>
+                                        <td>Kinh thành Huế<br><a href="https://maps.app.goo.gl/Z3iyAPhUGDjf7mk8A" target="_blank">Xem bản đồ</a></td>
+                                        <td>Di tích lịch sử</td>
+                                    </tr>
+                                    <tr>
+                                        <td>12:00</td>
+                                        <td>Bún bò Mẹ Kéo<br><a href="https://maps.app.goo.gl/jniMVTyW1MZuXuPH9" target="_blank">Xem bản đồ</a></td>
+                                        <td>Ăn trưa</td>
+                                    </tr>
+                                    <tr>
+                                        <td>12:30</td>
+                                        <td>Đề-Pô Cafe Chợ Đông Ba<br>02 Trần Hưng Đạo, Phú Hoà<br><a href="https://maps.app.goo.gl/rfMhzs6pjdX1nXbNA" target="_blank">Xem bản đồ</a></td>
+                                        <td>Nghỉ ngơi</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13:00</td>
+                                        <td>Nghỉ ngơi hoặc thăm Lăng Khải Định</td>
+                                        <td>Nhận Phong: 12h30</td>
+                                    </tr>
+                                    <tr>
+                                        <td>15:00</td>
+                                        <td>Tour ẩm thực chiều</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>19:00</td>
+                                        <td>Ca Huế trên sông Hương</td>
+                                        <td>Trải nghiệm văn hóa</td>
+                                    </tr>
+                                    <tr>
+                                        <td>20:00</td>
+                                        <td>Ăn tối và thưởng thức đặc sản</td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                                
+                                <div class="food-recommendations">
+                                    <h5>Địa điểm ẩm thực chiều:</h5>
+                                    <ul>
+                                        <li>Cơm hến Hoa Đông <a href="https://maps.app.goo.gl/cX2M3jyQEeqRPqr67" target="_blank">Xem bản đồ</a></li>
+                                        <li>BÁNH ÉP GIA DI HUẾ <a href="https://maps.app.goo.gl/bJFAbExvYPk3kuSF9" target="_blank">Xem bản đồ</a></li>
+                                        <li>Bánh mì Ô Lễ <a href="https://maps.app.goo.gl/mfLNMbK1fCM8xYgr5" target="_blank">Xem bản đồ</a></li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="food-recommendations">
+                                    <h5>Địa điểm ẩm thực tối:</h5>
+                                    <ul>
+                                        <li>Chè bột lọc heo quay (Chè mợ tôn đích) <a href="https://maps.app.goo.gl/TegrEACrYDckgsAW9" target="_blank">Xem bản đồ</a></li>
+                                        <li>Vịt lộn, cút - Vịt lộn um bầu AT&F <a href="https://maps.app.goo.gl/TT7fzR3gUQSuQrfs5" target="_blank">Xem bản đồ</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hue - Hoi An -->
+            <div id="leg-3" class="route-card">
+                <div class="route-header">
+                    <h3>Chặng 3: Huế → Hội An (qua Đèo Hải Vân)</h3>
+                    <div class="route-stats">
+                        <div class="stat">~4 giờ</div>
+                        <div class="stat">140 km</div>
+                    </div>
+                </div>
+                <div class="route-body">
+                    <div class="route-info">
+                        <div class="info-item">
+                            <h4>Các mốc định hướng lộ trình (Dấu lưu Vietmap)</h4>
+                            <ul>
+                                <li><strong>Hue - Deo Hai Van - Hoi An - 1:</strong> Đèo Hải Vân, tt. Lăng Cô, Phú Lộc, Thành phố Huế</li>
+                                <li><strong>Hue - Deo Hai Van - Hoi An - 2:</strong> Pho Cho Dem Villa</li>
+                            </ul>
+                        </div>
+                        <div class="info-item">
+                            <h4>Chi tiết đường đi</h4>
+                            <p>Cao tốc: 0 km</p>
+                            <p>Đường thường: 140 km</p>
+                            <a href="https://www.google.com/maps/dir/Hue,+Th%C3%A0nh+ph%E1%BB%91+Hu%E1%BA%BF/%C4%90%C3%A8o+H%E1%BA%A3i+V%C3%A2n,+tt.+L%C4%83ng+C%C3%B4,+Ph%C3%BA+L%E1%BB%99c,+Th%C3%A0nh+ph%E1%BB%91+Hu%E1%BA%BF/15+Tho%E1%BA%A1i+Ng%E1%BB%8Dc+H%E1%BA%A7u,+Ph%C6%B0%E1%BB%9Dng+Minh+An,+H%E1%BB%99i+An,+Qu%E1%BA%A3ng+Nam,+Vi%E1%BB%87t+Nam" target="_blank" class="btn">Xem lộ trình trên Google Maps</a>
+                        </div>
+                    </div>
+                    
+                    <div class="accommodation">
+                        <h4>Khách sạn: Pho Cho Dem Villa</h4>
+                        <p><strong>Địa chỉ:</strong> <a href="https://maps.app.goo.gl/AUfP5TZeWp19krvP8" target="_blank">15/1 Thoại Ngọc Hầu, Phường Minh An, Hội An, Quảng Nam</a></p>
+                        <p><strong>SĐT:</strong> <a href="tel:0934868717">0934868717</a></p>
+                        <p><strong>Zalo:</strong> Vy Night Market Villa</p>
+                        <a href="https://maps.app.goo.gl/AUfP5TZeWp19krvP8" target="_blank" class="btn">Xem vị trí trên bản đồ</a>
+                    </div>
+                    
+                    <div class="itinerary-section">
+                        <h4>Lịch trình chi tiết</h4>
+                        
+                        <div class="itinerary-day">
+                            <div class="itinerary-day-header">Ngày 24/06: Khám phá Hội An (Ngày 1)</div>
+                            <div class="itinerary-day-content">
+                                <table class="itinerary-table">
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Hoạt động</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                    <tr>
+                                        <td>05:00 - 07:00</td>
+                                        <td>Di chuyển từ Huế tới Hội An</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>06:00 - 07:00</td>
+                                        <td>Đèo Hải Vân</td>
+                                        <td>Ngắm cảnh, chụp ảnh</td>
+                                    </tr>
+                                    <tr>
+                                        <td>07:00</td>
+                                        <td>Bánh mì Hội An + Cà phê<br><a href="https://maps.app.goo.gl/qXATFTAFWccNqiVv7" target="_blank">Xem bản đồ</a></td>
+                                        <td>Điểm tâm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>07:30</td>
+                                        <td>Chèo thúng ở Rừng dừa 7 mẫu<br>Hamlet 3, ĐX18, Cẩm Thanh, Hội An</td>
+                                        <td>Trải nghiệm địa phương</td>
+                                    </tr>
+                                    <tr>
+                                        <td>09:30</td>
+                                        <td>Cháo ngêu Cô Xương<br><a href="https://maps.app.goo.gl/HCE6tfKMYu4ZQjFZA" target="_blank">Xem bản đồ</a></td>
+                                        <td>Ăn nhẹ</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10:00</td>
+                                        <td>Ngắm phố cổ, uống cà phê</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>12:00</td>
+                                        <td>Cơm gà An Hiền<br><a href="https://maps.app.goo.gl/K8fFe7z1LDBRpg1X9" target="_blank">Xem bản đồ</a></td>
+                                        <td>Ăn trưa</td>
+                                    </tr>
+                                    <tr>
+                                        <td>12:30</td>
+                                        <td>Nghỉ ngơi</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>14:00</td>
+                                        <td>Làng gốm Thanh Hà<br><a href="https://maps.app.goo.gl/NB5HEfaVQXk1n6HM9" target="_blank">Xem bản đồ</a></td>
+                                        <td>Trải nghiệm làm gốm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>15:30</td>
+                                        <td>Cà phê Rolling Chill House<br><a href="https://maps.app.goo.gl/yVHEkLJ8xGT5EKpw8" target="_blank">Xem bản đồ</a></td>
+                                        <td>Nghỉ ngơi</td>
+                                    </tr>
+                                    <tr>
+                                        <td>18:00</td>
+                                        <td>Phố cổ Hội An</td>
+                                        <td>Mót nước chanh</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="itinerary-day">
+                            <div class="itinerary-day-header">Ngày 25/06: Khám phá Hội An (Ngày 2)</div>
+                            <div class="itinerary-day-content">
+                                <table class="itinerary-table">
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Hoạt động</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                    <tr>
+                                        <td>07:00</td>
+                                        <td>Bánh đập + hến<br><a href="https://maps.app.goo.gl/AoCKtUsWTNKPrvwo8" target="_blank">Xem bản đồ</a></td>
+                                        <td>Điểm tâm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>08:00 - 15:00</td>
+                                        <td>Cù Lao Tràm</td>
+                                        <td>Nghỉ ngơi (Hỏi trước)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>17:00</td>
+                                        <td>Khám phá Phố cổ Hội An</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>20:00</td>
+                                        <td>Show "Ký ức Hội An"</td>
+                                        <td>Trải nghiệm văn hóa</td>
+                                    </tr>
+                                </table>
+                                <p><strong>Lưu ý:</strong> Ngủ sớm mai lái xe</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hoi An - Quy Nhon -->
+            <div id="leg-4" class="route-card">
+                <div class="route-header">
+                    <h3>Chặng 4: Hội An → Quy Nhơn</h3>
+                    <div class="route-stats">
+                        <div class="stat">~7 giờ</div>
+                        <div class="stat">381 km</div>
+                    </div>
+                </div>
+                <div class="route-body">
+                    <div class="route-info">
+                        <div class="info-item">
+                            <h4>Các mốc định hướng lộ trình (Dấu lưu Vietmap)</h4>
+                            <ul>
+                                <li><strong>Hoi An - Quy Nhon - 1:</strong> ĐT639, Bình Định</li>
+                                <li><strong>Hoi An - Quy Nhon - 2:</strong> TMS Quy Nhơn</li>
+                            </ul>
+                        </div>
+                        <div class="info-item">
+                            <h4>Chi tiết đường đi</h4>
+                            <p>Cao tốc: 100 km</p>
+                            <p>Đường thường: 281 km</p>
+                            <a href="https://www.google.com/maps/dir/H%E1%BB%99i+An,+Qu%E1%BA%A3ng+Nam/%C4%90T639,+B%C3%ACnh+%C4%90%E1%BB%8Bnh,+Vi%E1%BB%87t+Nam/TMS+Quy+Nh%C6%A1n+-+Lee+Xinh,+28+Nguy%E1%BB%85n+Hu%E1%BB%87,+Ph%C6%B0%E1%BB%9Dng+L%C3%AA+L%E1%BB%A3i,+Quy+Nh%C6%A1n,+B%C3%ACnh+%C4%90%E1%BB%8Bnh+55087,+Vi%E1%BB%87t+Nam" target="_blank" class="btn">Xem lộ trình trên Google Maps</a>
+                        </div>
+                    </div>
+                    
+                    <div class="accommodation">
+                        <h4>Khách sạn: TMS Quy Nhơn</h4>
+                        <p><strong>Địa chỉ:</strong> <a href="https://maps.app.goo.gl/hz92pNFuEdDZmDzQ6" target="_blank">28 Nguyễn Huệ, Phường Lê Lợi, Quy Nhơn, Bình Định 55087</a></p>
+                        <p><strong>SĐT:</strong> <a href="tel:0966377719">0966377719</a> / <a href="tel:0935339131">0935339131</a></p>
+                        <p><strong>Mã đặt phòng:</strong> 1621072452</p>
+                        <p><strong>Thời gian nhận phòng:</strong> 14:00 - 12:00</p>
+                        <a href="https://maps.app.goo.gl/hz92pNFuEdDZmDzQ6" target="_blank" class="btn">Xem vị trí trên bản đồ</a>
+                    </div>
+                    
+                    <div class="itinerary-section">
+                        <h4>Lịch trình chi tiết</h4>
+                        
+                        <div class="itinerary-day">
+                            <div class="itinerary-day-header">Ngày 26/06: Khám phá Quy Nhơn</div>
+                            <div class="itinerary-day-content">
+                                <table class="itinerary-table">
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Hoạt động</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                    <tr>
+                                        <td>04:00-12:00</td>
+                                        <td>Duy Chuyển</td>
+                                        <td>Điểm tâm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>14:00</td>
+                                        <td>Kỳ Co<br><a href="https://maps.app.goo.gl/4qj8hjs1bKvKZnoe7" target="_blank">Xem bản đồ</a></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>16:00</td>
+                                        <td>Nghỉ ngơi</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>18:00</td>
+                                        <td>Chợ đêm Quy Nhơn<br><a href="https://maps.app.goo.gl/WD68JjrsHrrYRrXcA" target="_blank">Xem bản đồ</a></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>20:00</td>
+                                        <td>Phố Ngọc Hân Công Chúa (ốc)<br><a href="https://g.co/kgs/Ti1Cu3k" target="_blank">Xem bản đồ</a></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                                
+                                <div class="food-recommendations">
+                                    <h5>Địa điểm tham khảo khác:</h5>
+                                    <ul>
+                                        <li>Phố Ngọc Hân Công Chúa: 16-22h</li>
+                                        <li>Chợ đêm Quy Nhơn: 19-22h</li>
+                                        <li>Khu du lịch sinh thái Hàm Hồ</li>
+                                        <li>Kỳ Co, Eo Gió</li>
+                                        <li>Quán bar ven biển Suft Bar đường Xuân Diệu: 16-23h</li>
+                                        <li>Hòn Khô - Làng chày Nhơn Hải</li>
+                                        <li>Cù Lao Xanh</li>
+                                        <li>Chùa Linh Hương</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quy Nhon - Nha Trang -->
+            <div id="leg-5" class="route-card">
+                <div class="route-header">
+                    <h3>Chặng 5: Quy Nhơn → Nha Trang</h3>
+                    <div class="route-stats">
+                        <div class="stat">~4 giờ</div>
+                        <div class="stat">210 km</div>
+                    </div>
+                </div>
+                <div class="route-body">
+                    <div class="route-info">
+                        <div class="info-item">
+                            <h4>Các mốc định hướng lộ trình (Dấu lưu Vietmap)</h4>
+                            <ul>
+                                <li><strong>Quy Nhon - Nha Trang - 1:</strong> 276-278 Phạm Văn Đồng, Sông Cầu, Phú Yên</li>
+                                <li><strong>Quy Nhon - Nha Trang - 2:</strong> Panorama Apartment & Hotel</li>
+                            </ul>
+                        </div>
+                        <div class="info-item">
+                            <h4>Chi tiết đường đi</h4>
+                            <p>Cao tốc: 0 km</p>
+                            <p>Đường thường: 210 km</p>
+                            <a href="https://www.google.com/maps/dir/Quy+Nh%C6%A1n,+B%C3%ACnh+%C4%90%E1%BB%8Bnh/276-278+Ph%E1%BA%A1m+V%C4%83n+%C4%90%E1%BB%93ng,+S%C3%B4ng+C%E1%BA%A7u,+Ph%C3%BA+Y%C3%AAn/Panorama+Apartment+%26+Hotel,+02+Nguy%E1%BB%85n+Th%E1%BB%8B+Minh+Khai,+L%E1%BB%99c+Th%E1%BB%8D,+Nha+Trang,+Kh%C3%A1nh+H%C3%B2a+650000,+Vi%E1%BB%87t+Nam" target="_blank" class="btn">Xem lộ trình trên Google Maps</a>
+                        </div>
+                    </div>
+                    
+                    <div class="accommodation">
+                        <h4>Khách sạn: Panorama Apartment & Hotel</h4>
+                        <p><strong>Địa chỉ:</strong> <a href="https://maps.app.goo.gl/NUaEr2yfnMgHzk126" target="_blank">02 Nguyễn Thị Minh Khai, Lộc Thọ, Nha Trang, Khánh Hòa 650000</a></p>
+                        <p><strong>SĐT:</strong> <a href="tel:0904776280">0904 776 280</a></p>
+                        <p><strong>Booking:</strong> <a href="https://www.agoda.com/vi-vn/kymodo-apartment/hotel/nha-trang-vn.html?countryId=38&finalPriceView=1&isShowMobileAppPrice=false&cid=1922877&numberOfBedrooms=&familyMode=false&adults=4&children=0&rooms=1&maxRooms=0&isCalendarCallout=false&childAges=&numberOfGuest=0&missingChildAges=false&travellerType=3&showReviewSubmissionEntry=false&currencyCode=VND&isFreeOccSearch=false&tag=243ac535-8766-4346-ad2d-387ccf542847&tspTypes=5%2C8&filterPaymentOptions=49499&los=1&searchrequestid=a4208d68-5ee2-4528-92cf-f51655277a19&checkin=2025-06-19" target="_blank">Agoda</a></p>
+                        <p><strong>Thời gian nhận phòng:</strong> 14:00 - 12:00</p>
+                        <a href="https://maps.app.goo.gl/NUaEr2yfnMgHzk126" target="_blank" class="btn">Xem vị trí trên bản đồ</a>
+                    </div>
+                    
+                    <div class="itinerary-section">
+                        <h4>Lịch trình chi tiết</h4>
+                        
+                        <div class="itinerary-day">
+                            <div class="itinerary-day-header">Ngày 27/06: Vinpearl Nha Trang</div>
+                            <div class="itinerary-day-content">
+                                <table class="itinerary-table">
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Hoạt động</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                    <tr>
+                                        <td>06:00 - 09:00</td>
+                                        <td>Di chuyển đến Vinpearl</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>09:00 - 21:00</td>
+                                        <td>Vui chơi tại Vinpearl</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>21:00 - 21:45</td>
+                                        <td>Nhà hàng Thanh Sương</td>
+                                        <td>Ăn tối</td>
+                                    </tr>
+                                    <tr>
+                                        <td>21:45</td>
+                                        <td>Về khách sạn nghỉ ngơi</td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="itinerary-day">
+                            <div class="itinerary-day-header">Ngày 28/06: Lựa chọn hoạt động</div>
+                            <div class="itinerary-day-content">
+                                <p>Lựa chọn giữa:</p>
+                                <ul>
+                                    <li>Tham quan các đảo (tùy chọn)</li>
+                                    <li>Về TP.HCM</li>
+                                </ul>
+                                
+                                <div class="food-recommendations">
+                                    <h5>Các đảo có thể tham quan:</h5>
+                                    <ol>
+                                        <li><strong>Tour 4 đảo phổ biến</strong>:
+                                            <ul>
+                                                <li>Hòn Mun: Lặn ngắm san hô</li>
+                                                <li>Hòn Một: Chèo thuyền kayak</li>
+                                                <li>Hòn Tằm: Tắm biển, nghỉ dưỡng</li>
+                                                <li>Làng Chài: Tìm hiểu đời sống ngư dân</li>
+                                            </ul>
+                                        </li>
+                                        <li><strong>Đảo Điệp Sơn</strong>: Nổi tiếng với con đường đi bộ giữa biển</li>
+                                        <li><strong>Đảo Bình Ba</strong>: Được mệnh danh là "đảo tôm hùm"</li>
+                                        <li><strong>Đảo Bình Hưng</strong>: Nổi tiếng với bãi biển hoang sơ</li>
+                                    </ol>
+                                </div>
+                                
+                                <div class="food-recommendations">
+                                    <h5>Địa điểm tham khảo khác:</h5>
+                                    <ul>
+                                        <li>Bò nướng Lạc Cảnh - 44 Bình Khiêm</li>
+                                        <li>Quán dê Thanh Đa - 66 Nguyễn Thị Minh Khai</li>
+                                        <li>Tour 3 đảo: Hòn Mun - Làng Chài - Hòn Tằm</li>
+                                        <li>Thủy cung Trí Nguyên</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Nha Trang - HCM -->
+            <div id="leg-6" class="route-card">
+                <div class="route-header">
+                    <h3>Chặng 6: Nha Trang → TP.HCM</h3>
+                    <div class="route-stats">
+                        <div class="stat">~6.5 giờ</div>
+                        <div class="stat">435 km</div>
+                    </div>
+                </div>
+                <div class="route-body">
+                    <div class="route-info">
+                        <div class="info-item">
+                            <h4>Chi tiết đường đi</h4>
+                            <p>Cao tốc: 320 km</p>
+                            <p>Đường thường: 115 km</p>
+                            <a href="https://www.google.com/maps/dir/Nha+Trang,+Kh%C3%A1nh+H%C3%B2a/FLORA+ANH+%C4%90%C3%80O,+%C4%90%C6%B0%E1%BB%9Dng+%C4%90%E1%BB%97+Xu%C3%A2n+H%E1%BB%A3p,+Ph%C6%B0%E1%BB%9Bc+Long+B,+Th%E1%BB%A7+%C4%90%E1%BB%A9c,+H%E1%BB%93+Ch%C3%AD+Minh" target="_blank" class="btn">Xem lộ trình trên Google Maps</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Nút điều hướng ở cuối trang -->
+        <div class="container">
+            <div class="navigation-container">
+                <div class="nav-buttons">
+                    <button id="bottom-prev-btn" class="direction-btn" onclick="prevLeg()">← Chặng trước</button>
+                    <button id="bottom-next-btn" class="direction-btn" onclick="nextLeg()">Chặng sau →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>Hành Trình Khám Phá Miền Trung - Kế Hoạch Du Lịch Gia Đình</p>
+            <p>© 2025 - Chúc bạn có chuyến đi vui vẻ và an toàn!</p>
+        </div>
+    </footer>
+</body>
+</html>
+</html>
